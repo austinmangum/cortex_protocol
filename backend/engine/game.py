@@ -21,19 +21,19 @@ class Game:
 
     def register_action(self, action_type: str, player_name: str, role: Optional[str] = None, target_name: Optional[str] = None, meta=None):
         action = {
-            "type": action_type,           # claim, block, challenge, etc.
-            "player": player_name,
-            "role": role,
+            'type': action_type,           # claim, block, challenge, etc.
+            'player': player_name,
+            'role': role,
             "target": target_name,
             #"meta": meta or {},
-            "status": "pending"
+            'status': "pending"
         }
         self.action_chain.append(action)
         return action
 
     def get_last_action_of_type(self, action_type: str):
         for action in reversed(self.action_chain):
-            if action["type"] == action_type:
+            if action['type'] == action_type:
                 return action
         return None
 
@@ -74,23 +74,23 @@ class Game:
         if not challenge_target:
             return "No claim or block to challenge."
 
-        challenged_player = next((p for p in self.players if p.name == challenge_target["player"] and p.alive), None)
+        challenged_player = next((p for p in self.players if p.name == challenge_target['player'] and p.alive), None)
         if not challenged_player:
-            return f"{challenge_target["player"]} in not alive or not a valid target"
+            return f"{challenge_target['player']} in not alive or not a valid target"
         challenger = next((p for p in self.players if p.name == challenger_name), None)
-        claimed_role = challenge_target["role"]
+        claimed_role = challenge_target['role']
 
         if challenged_player.has_role(claimed_role):
             # Challenger loses
             challenged_player.lose_card(claimed_role)
             challenged_player.add_card(self.deck.pop())
             challenger.lose_card()
-            challenge_target["status"] = "validated"
+            challenge_target['status'] = "validated"
             return f"{challenger.name} failed the challenge. {challenged_player.name} shows {claimed_role}."
         else:
             # Actor loses
             challenged_player.lose_card()
-            challenge_target["status"] = "failed"
+            challenge_target['status'] = "failed"
             return f"{challenged_player.name} was bluffing. {challenger.name} wins the challenge."
             
     def block(self, blocker_name: str, blocking_role: str):
@@ -101,13 +101,13 @@ class Game:
         for i in range(len(self.action_chain)):
             action = self.action_chain[i]
 
-            if action["type"] == "claim" and action.get("status") in (None, "pending", "validated"):
-                actor_name = action["player"]
+            if action['type'] == "claim" and action.get('status') in (None, "pending", "validated"):
+                actor_name = action['player']
                 actor = next((p for p in self.players if p.name == actor_name and p.alive), None)
                 if not actor:
                     return f"{actor_name} is no longer alive."
 
-                role = action["role"]
+                role = action['role']
                 target_name = action.get("target")
                 target = next((p for p in self.players if p.name == target_name and p.alive), None) if target_name else None
 
@@ -122,10 +122,10 @@ class Game:
                 # 🔍 Check for a block directly after this claim
                 if i + 1 < len(self.action_chain):
                     maybe_block = self.action_chain[i + 1]
-                    if maybe_block["type"] == "block" and maybe_block.get("target") == actor_name:
-                        block_status = maybe_block.get("status")
-                        blocking_role = maybe_block.get("role")
-                        blocker_name = maybe_block.get("player")
+                    if maybe_block['type'] == "block" and maybe_block.get("target") == actor_name:
+                        block_status = maybe_block.get('status')
+                        blocking_role = maybe_block.get('role')
+                        blocker_name = maybe_block.get('player')
 
                         blocker_info = ROLE_DEFINITIONS.get(blocking_role)
                         blocked_actions = blocker_info.get("blocks", []) if blocker_info else []
@@ -133,7 +133,7 @@ class Game:
                         # Only block if it’s a valid blocker of this action
                         if action_name in blocked_actions:
                             if block_status in (None, "pending", "validated"):
-                                action["status"] = "blocked"
+                                action['status'] = "blocked"
                                 self.next_turn()
                                 return f"{actor_name}'s action was blocked by {blocker_name} using {blocking_role}."
                             elif block_status == "failed":
@@ -148,7 +148,7 @@ class Game:
                     return f"No resolver found for action: {action_name}"
 
                 result = resolver(self, actor, target)
-                action["status"] = "resolved"
+                action['status'] = "resolved"
                 self.next_turn()
                 return result
 
