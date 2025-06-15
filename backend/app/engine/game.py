@@ -37,14 +37,20 @@ class Game:
                 return action
         return None
 
-
-
-
+    def check_win_condition(self):
+        alive_players = [p for p in self.players if p.alive]
+        if len(alive_players) == 1:
+            self.winner = alive_players[0].name
+            return True
+        return False
 
     def get_current_player(self):
         return self.players[self.current_turn]
 
     def next_turn(self):
+        if self.check_win_condition():
+            print(f"🎉 Game Over! {self.winner} wins!")
+            return
         alive_players = [p for p in self.players if p.alive] # gets a list of all alive players
         idx = alive_players.index(self.get_current_player()) # finds the location of the current player in the list
         self.current_turn = self.players.index(alive_players[(idx + 1) % len(alive_players)]) #moved turn to next alive player. Modulo to loop back to start
@@ -153,6 +159,9 @@ class Game:
                 return result
 
         return "No claim action ready to resolve."
+
+    def is_game_over(self):
+        return hasattr(self, 'winner')
 
     def __repr__(self):
         return "\n".join(str(player) for player in self.players)
