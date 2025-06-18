@@ -6,10 +6,16 @@ from .card_definitions import *
 
 
 class Game:
-    def __init__(self, player_names: List[str], roles: List[str]):
+    COPIES_PER_ROLE = 3
+
+    def __init__(self, player_names: List[str]):
         self.action_chain = []
         self.players: List[Player] = [Player(name) for name in player_names]
-        self.deck: List[Card] = [Card(role) for role in roles * 3]  # 3 of each role
+
+        roles = list(card_definitions.ROLE_DEFINITIONS.keys())  # 3 of each role
+        self.deck: List[Card] = [
+            Card(role) for role in roles for _ in range(self.COPIES_PER_ROLE)
+        ]
         random.shuffle(self.deck)
 
         # Deal 2 cards to each player

@@ -9,7 +9,7 @@ class GameStore:
         self.game = None
 
     def start_new_game(self, data: StartGameRequest) -> GameStateResponse:
-        self.game = Game(data.player_names, data.roles)
+        self.game = Game(data.player_names)
         return self.get_current_state()
 
     def get_current_state(self) -> GameStateResponse:

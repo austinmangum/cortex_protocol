@@ -6,7 +6,7 @@ from backend.app.engine.player import Player
 
 class StartGameRequest(BaseModel):
     player_names: List[str]
-    roles: List[str]
+    
 
 class PlayerState(BaseModel):
     name: str

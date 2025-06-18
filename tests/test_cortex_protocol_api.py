@@ -1,5 +1,6 @@
 # run "python -m uvicorn backend.app.main:app --reload" to sstart server locally
 # then run "python tests/test_cortex_protocol_api.py" in the command line to test 
+
 import requests
 
 BASE_URL = "http://localhost:8000/game"
